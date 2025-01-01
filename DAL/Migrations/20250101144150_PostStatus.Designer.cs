@@ -4,6 +4,7 @@ using DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAL.Migrations
 {
     [DbContext(typeof(BlogContext))]
-    partial class BlogContextModelSnapshot : ModelSnapshot
+    [Migration("20250101144150_PostStatus")]
+    partial class PostStatus
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -48,9 +51,6 @@ namespace DAL.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("PublishAt")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("Status")
@@ -180,7 +180,7 @@ namespace DAL.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "IGLI.JANKO@GMAIL.COM",
                             NormalizedUserName = "IGLI.JANKO@GMAIL.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEEuvsfgFCOlKAHBiTDDJZ6FMHHSj8T6Jdl7nYvz044Lk48+huvGNCpNS/eUa3DUM2w==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEF227uykXlBmgLpeHA4sKLnCQAdhrRpeiszqLFlhju+g5mICLbX4k1SBQ0958aehXg==",
                             PhoneNumberConfirmed = true,
                             SecurityStamp = "90c50356-919f-4270-9cb4-6b3ea5dc4c64",
                             TwoFactorEnabled = false,
