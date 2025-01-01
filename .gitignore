@@ -4,3 +4,9 @@ obj/
 riderModule.iml
 /_ReSharper.Caches/
 /.idea/
+/DAL/bin/
+/DAL/obj/
+/BLL/obj/
+/BLL/bin/
+/WebAPI/obj/
+/WebAPI/bin/
