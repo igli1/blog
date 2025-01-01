@@ -10,5 +10,5 @@ public class User : IdentityUser<Guid>
     public string FirstName { get; set; }
     [MaxLength(50)]
     public string LastName { get; set; }
-    
+    public ICollection<RefreshTokens>? RefreshTokens { get; set; }
 }

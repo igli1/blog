@@ -11,6 +11,7 @@ public class BlogContext: IdentityDbContext<User, IdentityRole<Guid>, Guid>
     public DbSet<Post> Post { get; set; }
     public DbSet<Category> Category { get; set; }
     public DbSet<PostCategory> PostCategory { get; set; }
+    public DbSet<RefreshTokens> RefreshTokens { get; set; }
     public BlogContext(DbContextOptions<BlogContext> options)
         : base(options)
     {
@@ -88,6 +89,10 @@ public class BlogContext: IdentityDbContext<User, IdentityRole<Guid>, Guid>
         modelBuilder.Entity<Post>()
             .Property(n => n.UpdatedAt)
             .IsRequired();
+        modelBuilder.Entity<RefreshTokens>()
+            .HasOne(us => us.User)
+            .WithMany(au => au.RefreshTokens)
+            .HasForeignKey(us => us.UserId);
     }
 
 }
