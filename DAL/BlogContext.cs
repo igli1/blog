@@ -8,9 +8,9 @@ namespace DAL;
 
 public class BlogContext: IdentityDbContext<User, IdentityRole<Guid>, Guid>
 {
-    public DbSet<Post> Note { get; set; }
+    public DbSet<Post> Post { get; set; }
     public DbSet<Category> Category { get; set; }
-    public DbSet<PostCategory> NoteCategory { get; set; }
+    public DbSet<PostCategory> PostCategory { get; set; }
     public BlogContext(DbContextOptions<BlogContext> options)
         : base(options)
     {
