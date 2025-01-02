@@ -29,7 +29,8 @@ builder.Services.AddIdentity<User, IdentityRole<Guid>>(options =>
         options.SignIn.RequireConfirmedEmail = false;
         options.SignIn.RequireConfirmedPhoneNumber = false;
     })
-    .AddEntityFrameworkStores<BlogContext>();
+    .AddEntityFrameworkStores<BlogContext>()
+    .AddDefaultTokenProviders();
 
 builder.Services.Configure<JwtConfiguration>(builder.Configuration.GetSection(JwtConfiguration.SectionName));
 builder.Services.AddAuthentication(options =>
@@ -43,8 +44,8 @@ builder.Services.AddAuthentication(options =>
     {
         IssuerSigningKey = new SymmetricSecurityKey
             (Encoding.UTF8.GetBytes(builder.Configuration["JwtConfiguration:Key"])),
-        ValidateIssuer = true,
-        ValidateAudience = true,
+        ValidateIssuer = false,
+        ValidateAudience = false,
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
         ClockSkew = TimeSpan.Zero
