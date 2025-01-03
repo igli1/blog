@@ -34,7 +34,8 @@ public class BlogController : ControllerBase
 
         var category = new Category
         {
-            Name = model.CategoryName.ToLower()
+            Name = model.CategoryName.ToLower(),
+            Description = model.CategoryDescription.ToLower(),
         };
         
         var categoryResponse = await _blogService.AddCategoryAsync(category);
