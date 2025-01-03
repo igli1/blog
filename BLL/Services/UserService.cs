@@ -29,7 +29,7 @@ public class UserService : IUserService
         var serviceResponse = new ServiceResponse<RefreshTokens>();
         try
         {
-            var existingRt = await _unitOfWork.RefreshTokens.GetByToken(rt.RefreshToken);
+            var existingRt =  _unitOfWork.RefreshTokens.GetByToken(rt.RefreshToken);
 
             if (existingRt != null)
             {
@@ -53,7 +53,7 @@ public class UserService : IUserService
             return serviceResponse;
         }
     }
-    public TokenResponse GenerateAccessToken(string email, string userRole)
+    public AccessTokenResponse GenerateAccessToken(string email, string userRole)
     {
         var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_jwt.Key));
         var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
@@ -70,7 +70,7 @@ public class UserService : IUserService
             expires: DateTime.UtcNow.AddMinutes(_jwt.TokenValidityInMinutes),
             signingCredentials: credentials);
 
-        var tokenResponse = new TokenResponse
+        var tokenResponse = new AccessTokenResponse
         {
             AccessToken = new JwtSecurityTokenHandler().WriteToken(token),
             AccessTokenExpiryTime = token.ValidTo
@@ -92,4 +92,50 @@ public class UserService : IUserService
         
         return tokenResponse;
     }
+    public async Task<ServiceResponse<TokensResponse>> RefreshAccessToken(string refreshToken)
+    {
+        var serviceResponse = new ServiceResponse<TokensResponse>();
+
+        try
+        {
+            serviceResponse.Status = true;
+            var existingRt =  _unitOfWork.RefreshTokens.GetByToken(refreshToken);
+
+            if (existingRt is null || existingRt.RefreshTokenExpiryTime < DateTime.UtcNow)
+            {
+                serviceResponse.Data = null;
+                serviceResponse.Message = "Refresh token does not exist or is expired ";
+                return serviceResponse;
+            }
+
+            var user = _unitOfWork.Users.GetUserWithRoles(existingRt.UserId);
+
+            if (user == null)
+            {
+                serviceResponse.Data = null;
+                serviceResponse.Message = "User does not exist";
+                return serviceResponse;
+            }
+            var tokenResponse = new TokensResponse
+            {
+                AccessToken = GenerateAccessToken(user.Email,  user?.RoleName),
+                RefreshToken = new RefreshTokenResponse
+                {
+                    RefreshTokenExpiryTime = existingRt.RefreshTokenExpiryTime,
+                    RefreshToken = existingRt.RefreshToken
+                }
+            };
+            serviceResponse.Data = tokenResponse;
+            
+            return serviceResponse;
+        }
+        catch (Exception e)
+        {
+            serviceResponse.Status = false;
+            serviceResponse.Message = e.Message;
+            return serviceResponse;
+        }
+
+    }
+
 }

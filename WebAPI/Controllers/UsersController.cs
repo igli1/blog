@@ -95,7 +95,45 @@ public class UsersController : ControllerBase
         
         return Ok(tokens);
     }
+    
+    [HttpPost]
+    [Route("refresh-token")]
+    public async Task<ActionResult> RefreshToken([FromBody] RefreshTokenDto model)
+    {
+        if (!ModelState.IsValid)
+        {
+            var error = new ErrorDto
+            {
+                Code = "InvalidModel",
+                Description = "The model is not valid."
+            };
+            return BadRequest(error);
+        }
+        
+        var tokenResponse = await _userService.RefreshAccessToken(model.RefreshToken);
 
+        if (!tokenResponse.Status)
+        {
+            var error = new ErrorDto
+            {
+                Code = "Error",
+                Description = tokenResponse.Message
+            };
+            return BadRequest(error);
+        }
+        
+        var tokens = new TokenDto
+        {
+            AccessToken = tokenResponse.Data.AccessToken.AccessToken,
+            AccessTokenExpiryTime = tokenResponse.Data.AccessToken.AccessTokenExpiryTime,
+            RefreshToken = tokenResponse.Data.RefreshToken.RefreshToken,
+            RefreshTokenExpiryTime = tokenResponse.Data.RefreshToken.RefreshTokenExpiryTime
+        };
+        
+        return Ok(tokens);
+        
+    }
+    
     [HttpGet]
     [Route("test")]
     [Authorize]
