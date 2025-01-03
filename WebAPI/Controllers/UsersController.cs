@@ -64,13 +64,13 @@ public class UsersController : ControllerBase
         var userRoles = await _userManager.GetRolesAsync(user);
         var accessTokenResponse = _userService.GenerateAccessToken(model.Email, userRoles.FirstOrDefault());
         
-        var refreshToken = _userService.GenerateRefreshToken();
+        var refreshTokenResponse = _userService.GenerateRefreshToken();
 
         var refeshTokenEntity = new RefreshTokens
         {
             UserId = user.Id,
-            RefreshToken = refreshToken,
-            RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(_jwt.RefreshTokenValidityInDays)
+            RefreshToken = refreshTokenResponse.RefreshToken,
+            RefreshTokenExpiryTime = refreshTokenResponse.RefreshTokenExpiryTime
         };
         
         var insertRefreshTokenResponse = await _userService.AddRefreshTokens(refeshTokenEntity);
@@ -89,8 +89,8 @@ public class UsersController : ControllerBase
         {
             AccessToken = accessTokenResponse.AccessToken,
             AccessTokenExpiryTime = accessTokenResponse.AccessTokenExpiryTime,
-            RefreshToken = refreshToken,
-            RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(_jwt.RefreshTokenValidityInDays)
+            RefreshToken = refreshTokenResponse.RefreshToken,
+            RefreshTokenExpiryTime = refreshTokenResponse.RefreshTokenExpiryTime
         };
         
         return Ok(tokens);

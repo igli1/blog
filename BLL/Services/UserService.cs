@@ -33,7 +33,9 @@ public class UserService : IUserService
 
             if (existingRt != null)
             {
-                rt.RefreshToken = GenerateRefreshToken();
+                var refreshTokenResponse = GenerateRefreshToken();
+                rt.RefreshToken = refreshTokenResponse.RefreshToken;
+                rt.RefreshTokenExpiryTime = refreshTokenResponse.RefreshTokenExpiryTime;
             }
             
             rt.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(_jwt.RefreshTokenValidityInDays);
@@ -76,11 +78,18 @@ public class UserService : IUserService
         
         return tokenResponse;
     }
-    public string GenerateRefreshToken()
+    public RefreshTokenResponse GenerateRefreshToken()
     {
         var randomNumber = new byte[64];
         using var rng = RandomNumberGenerator.Create();
         rng.GetBytes(randomNumber);
-        return Convert.ToBase64String(randomNumber);
+
+        var tokenResponse = new RefreshTokenResponse
+        {
+            RefreshToken = Convert.ToBase64String(randomNumber),
+            RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(_jwt.RefreshTokenValidityInDays)
+        };
+        
+        return tokenResponse;
     }
 }
