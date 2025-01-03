@@ -53,13 +53,14 @@ public class UserService : IUserService
             return serviceResponse;
         }
     }
-    public AccessTokenResponse GenerateAccessToken(string email, string userRole)
+    public AccessTokenResponse GenerateAccessToken(string email, string userRole, Guid userId)
     {
         var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_jwt.Key));
         var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 
         var claims = new[]
         {
+            new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
             new Claim(JwtRegisteredClaimNames.Email, email),
             new Claim(ClaimTypes.Role, userRole),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
@@ -118,7 +119,7 @@ public class UserService : IUserService
             }
             var tokenResponse = new TokensResponse
             {
-                AccessToken = GenerateAccessToken(user.Email,  user?.RoleName),
+                AccessToken = GenerateAccessToken(user.Email,  user?.RoleName, user.UserId),
                 RefreshToken = new RefreshTokenResponse
                 {
                     RefreshTokenExpiryTime = existingRt.RefreshTokenExpiryTime,

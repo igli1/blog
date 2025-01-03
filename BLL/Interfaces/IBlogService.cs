@@ -10,4 +10,6 @@ public interface IBlogService
     Task<ServiceResponse<bool>> DeleteCategoryAsync(Guid categoryId);
     Task<ServiceResponse<IEnumerable<Category>>> GetAllCategoriesAsync();
     Task<ServiceResponse<Category>> UpdateCategoryAsync(Category entity);
+    Task<ServiceResponse<Post>> AddPostAsync(Post entity);
+
 }

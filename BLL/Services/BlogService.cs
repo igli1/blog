@@ -126,4 +126,36 @@ public class BlogService : IBlogService
         }
 
     }
+    
+    public async Task<ServiceResponse<Post>> AddPostAsync(Post entity)
+    {
+        var serviceResponse = new ServiceResponse<Post>();
+        try
+        {
+            var validPostCategories = new List<PostCategory>();
+            foreach (var postCategory in entity.PostCategories)
+            {
+                var category = await _unitOfWork.Categories.GetByIdAsync(postCategory.CategoryGuid);
+                if (category != null)
+                {
+                    validPostCategories.Add(postCategory);
+                }
+            }
+            
+            entity.PostCategories = validPostCategories;
+            
+            _unitOfWork.Post.AddAsync(entity);
+            await _unitOfWork.CommitAsync();
+
+            serviceResponse.Status = true;
+            serviceResponse.Data = entity;
+            return serviceResponse;
+        }
+        catch (Exception e)
+        {
+            serviceResponse.Status = false;
+            serviceResponse.Message = e.Message;
+            return serviceResponse;
+        }
+    }
 }
