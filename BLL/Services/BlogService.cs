@@ -144,7 +144,7 @@ public class BlogService : IBlogService
             
             entity.PostCategories = validPostCategories;
             
-            _unitOfWork.Post.AddAsync(entity);
+            await _unitOfWork.Post.AddAsync(entity);
             await _unitOfWork.CommitAsync();
 
             serviceResponse.Status = true;
