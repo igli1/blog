@@ -61,5 +61,27 @@ public class BlogController : ControllerBase
         
         return Ok(categoryResponse.Data);
     }
+    [HttpDelete]
+    [Route("DeleteCategory/{categoryId}")]
+    [Authorize (Roles = "Admin")]
+    public async Task<ActionResult> DeleteCategory(Guid categoryId)
+    {
+        var categoryResponse = await _blogService.DeleteCategoryAsync(categoryId);
 
+        if (!categoryResponse.Status || !categoryResponse.Data)
+        {
+            var error = new ErrorDto
+            {
+                Code = "Error",
+                Description = categoryResponse.Message
+            };
+            return BadRequest(error);
+        }
+        
+        return Ok(new
+        {
+            Message = "Category deleted successfully",
+            Statur = categoryResponse.Data
+        });
+    }
 }

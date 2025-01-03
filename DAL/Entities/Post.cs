@@ -22,4 +22,5 @@ public class Post
     public User User { get; set; }
     [Required]
     public PostStatus Status { get; set; }
+    public ICollection<PostCategory> PostCategories { get; set; }
 }

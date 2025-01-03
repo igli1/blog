@@ -44,4 +44,39 @@ public class BlogService : IBlogService
         serviceResponse.Data = category;
         return serviceResponse;
     }
+
+    public async Task<ServiceResponse<bool>> DeleteCategoryAsync(Guid categoryId)
+    {
+        var serviceResponse = new ServiceResponse<bool>();
+        
+        var category = await _unitOfWork.Categories.GetByIdAsync(categoryId);
+        serviceResponse.Status = true;
+
+        if (category is null)
+        {
+            serviceResponse.Data = false;
+            serviceResponse.Message = "Category not found";
+            
+            return serviceResponse;
+        }
+
+        var postCategoriesQuery =  _unitOfWork.PostCategories.GetAll();
+        
+        var postCategoriesCount = postCategoriesQuery.Where(pc => pc.CategoryGuid == categoryId)?.Count();
+
+        if (postCategoriesCount > 0)
+        {
+            serviceResponse.Data = false;
+            serviceResponse.Message = "Category has blog post's and can't be deleted";
+            
+            return serviceResponse;
+        }
+        
+        _unitOfWork.Categories.Remove(category);
+        await _unitOfWork.CommitAsync();
+        
+        serviceResponse.Data = true;
+        return serviceResponse;
+    }
+
 }

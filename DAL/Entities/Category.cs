@@ -8,4 +8,5 @@ public class Category
     [Required]
     [MaxLength(100)]
     public string Name { get; set; }
+    public ICollection<PostCategory> PostCategories { get; set; }
 }
