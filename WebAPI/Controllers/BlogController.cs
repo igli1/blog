@@ -85,4 +85,14 @@ public class BlogController : ControllerBase
             Statur = categoryResponse.Data
         });
     }
+    
+    [HttpGet]
+    [Route("GetAllCategories")]
+    [Authorize]
+    public async Task<ActionResult> AddCategory()
+    {
+        var categoryResponse = await _blogService.GetAllCategoriesAsync();
+        
+        return Ok(categoryResponse.Data);
+    }
 }

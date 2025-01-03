@@ -2,6 +2,7 @@
 using BLL.Models;
 using DAL;
 using DAL.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace BLL.Services;
 
@@ -76,6 +77,18 @@ public class BlogService : IBlogService
         await _unitOfWork.CommitAsync();
         
         serviceResponse.Data = true;
+        return serviceResponse;
+    }
+
+    public async Task<ServiceResponse<IEnumerable<Category>>> GetAllCategoriesAsync()
+    {
+        var serviceResponse = new ServiceResponse<IEnumerable<Category>>();
+        serviceResponse.Status = true;
+        
+        var categoriesQuery =  _unitOfWork.Categories.GetAll();
+        
+        serviceResponse.Data = await categoriesQuery.ToListAsync();
+        
         return serviceResponse;
     }
 
