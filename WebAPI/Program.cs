@@ -87,6 +87,8 @@ builder.Services.AddSwaggerGen(c =>
 });
 builder.Services.AddScoped<UnitOfWork>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IBlogService, BlogService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

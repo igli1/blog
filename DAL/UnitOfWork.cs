@@ -11,9 +11,11 @@ public class UnitOfWork : IUnitOfWork
         _context = context;
         RefreshTokens = new RefreshTokensRepository(_context);
         Users = new UserRepository(_context);
+        Categories = new CategoryRepository(_context);
     }
     public IRefreshTokensRepository RefreshTokens { get; private set; }
     public IUserRepository Users { get;  private set; }
+    public ICategoryRepository Categories { get; private set;}
 
 
     public async Task CommitAsync()
