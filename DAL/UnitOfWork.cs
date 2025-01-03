@@ -13,11 +13,13 @@ public class UnitOfWork : IUnitOfWork
         Users = new UserRepository(_context);
         Categories = new CategoryRepository(_context);
         PostCategories = new PostCategoryRepository(_context);
+        Post = new PostRepository(_context);
     }
     public IRefreshTokensRepository RefreshTokens { get; private set; }
     public IUserRepository Users { get;  private set; }
     public ICategoryRepository Categories { get; private set;}
     public IPostCategoryRepository PostCategories { get; private set;}
+    public IPostRepository Post { get; private set;}
 
     public async Task CommitAsync()
     {
