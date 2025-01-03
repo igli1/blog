@@ -18,6 +18,7 @@ public class BlogController : ControllerBase
     }
 
     [HttpPost]
+    [Route("AddCategory")]
     [Authorize (Roles = "Admin")]
     public async Task<ActionResult> AddCategory([FromBody] CategoryDto model)
     {
@@ -50,4 +51,15 @@ public class BlogController : ControllerBase
         
         return Ok(categoryResponse.Data);
     }
+    
+    [HttpGet]
+    [Route("GetCategories/{categoryId}")]
+    [Authorize]
+    public async Task<ActionResult> AddCategory(Guid categoryId)
+    {
+        var categoryResponse = await _blogService.GetCategoryAsync(categoryId);
+        
+        return Ok(categoryResponse.Data);
+    }
+
 }

@@ -34,4 +34,14 @@ public class BlogService : IBlogService
         }
     }
 
+    public async Task<ServiceResponse<Category>> GetCategoryAsync(Guid categoryId)
+    {
+        var serviceResponse = new ServiceResponse<Category>();
+        
+        var category = await _unitOfWork.Categories.GetByIdAsync(categoryId);
+        
+        serviceResponse.Status = true;
+        serviceResponse.Data = category;
+        return serviceResponse;
+    }
 }
