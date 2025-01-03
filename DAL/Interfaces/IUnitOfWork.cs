@@ -6,5 +6,6 @@ public interface IUnitOfWork : IAsyncDisposable
     IUserRepository Users { get;  }
     ICategoryRepository Categories { get;  }
     IPostCategoryRepository PostCategories { get;  }
+    IPostRepository Post { get;  }
     Task CommitAsync();
 }
