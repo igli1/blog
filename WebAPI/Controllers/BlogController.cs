@@ -95,4 +95,31 @@ public class BlogController : ControllerBase
         
         return Ok(categoryResponse.Data);
     }
+
+    [HttpPut]
+    [Route("EditCategory")]
+    [Authorize (Roles = "Admin")]
+    public async Task<ActionResult> EditCategory(EditCategoryDto model)
+    {
+        var category = new Category
+        {
+            Id = model.Id,
+            Name = model.Name,
+            Description = model.Description,
+        };
+
+        var categoryResponse = await  _blogService.UpdateCategoryAsync(category);
+
+        if (!categoryResponse.Status)
+        {
+            var error = new ErrorDto
+            {
+                Code = "Error",
+                Description = categoryResponse.Message
+            };
+            return BadRequest(error);
+        }
+        
+        return Ok(categoryResponse.Data);
+    }
 }
