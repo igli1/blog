@@ -62,7 +62,7 @@ public class UsersController : ControllerBase
         }
         
         var userRoles = await _userManager.GetRolesAsync(user);
-        var accessToken = _userService.GenerateAccessToken(model.Email, userRoles.FirstOrDefault());
+        var accessTokenResponse = _userService.GenerateAccessToken(model.Email, userRoles.FirstOrDefault());
         
         var refreshToken = _userService.GenerateRefreshToken();
 
@@ -85,16 +85,12 @@ public class UsersController : ControllerBase
             return BadRequest(error);
         }
         
-        var rt = new RefreshTokenDto
-        {
-            RefreshToken = refreshToken,
-            RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(_jwt.RefreshTokenValidityInDays)
-        };
-        
         var tokens = new TokenDto
         {
-            AccessToken = accessToken,
-            RefreshToken = rt
+            AccessToken = accessTokenResponse.AccessToken,
+            AccessTokenExpiryTime = accessTokenResponse.AccessTokenExpiryTime,
+            RefreshToken = refreshToken,
+            RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(_jwt.RefreshTokenValidityInDays)
         };
         
         return Ok(tokens);
@@ -102,7 +98,7 @@ public class UsersController : ControllerBase
 
     [HttpGet]
     [Route("test")]
-    [Authorize (Roles = "User")]
+    [Authorize]
     public ActionResult Get()
     {
         return Ok();

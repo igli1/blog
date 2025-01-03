@@ -51,7 +51,7 @@ public class UserService : IUserService
             return serviceResponse;
         }
     }
-    public string GenerateAccessToken(string email, string userRole)
+    public TokenResponse GenerateAccessToken(string email, string userRole)
     {
         var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_jwt.Key));
         var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
@@ -68,7 +68,13 @@ public class UserService : IUserService
             expires: DateTime.UtcNow.AddMinutes(_jwt.TokenValidityInMinutes),
             signingCredentials: credentials);
 
-        return new JwtSecurityTokenHandler().WriteToken(token);
+        var tokenResponse = new TokenResponse
+        {
+            AccessToken = new JwtSecurityTokenHandler().WriteToken(token),
+            AccessTokenExpiryTime = token.ValidTo
+        };
+        
+        return tokenResponse;
     }
     public string GenerateRefreshToken()
     {
