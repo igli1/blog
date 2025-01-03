@@ -72,6 +72,16 @@ public class BlogContext: IdentityDbContext<User, IdentityRole<Guid>, Guid>
         modelBuilder.Entity<PostCategory>()
             .HasKey(nc => new { nc.PostGuid, nc.CategoryGuid });
         
+        modelBuilder.Entity<PostCategory>()
+            .HasOne(pc => pc.Post)
+            .WithMany(p => p.PostCategories)
+            .HasForeignKey(pc => pc.PostGuid);
+
+        modelBuilder.Entity<PostCategory>()
+            .HasOne(pc => pc.Category)
+            .WithMany(c => c.PostCategories)
+            .HasForeignKey(pc => pc.CategoryGuid);
+        
         modelBuilder.Entity<Category>()
             .Property(c => c.Name)
             .HasMaxLength(100)
