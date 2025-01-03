@@ -16,12 +16,10 @@ public class UsersController : ControllerBase
 {
     private readonly UserManager<User> _userManager;
     private readonly IUserService _userService;
-    private readonly JwtConfiguration _jwt;
-    public UsersController(UserManager<User> userManager, IUserService userService, IOptions<JwtConfiguration> jwtConfiguration)
+    public UsersController(UserManager<User> userManager, IUserService userService)
     {
         _userManager = userManager;
         _userService = userService;
-        _jwt = jwtConfiguration.Value;
     }
     
     [HttpPost]
