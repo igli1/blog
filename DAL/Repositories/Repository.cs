@@ -3,34 +3,32 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DAL.Repositories;
 
-public class Repository<T> : IRepository<T> where T : class
+public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
 {
     private readonly BlogContext _context;
-    private readonly DbSet<T> _dbSet;
 
     public Repository(BlogContext context)
     {
         _context = context;
-        _dbSet = context.Set<T>();
     }
 
-    public async Task<T> GetByIdAsync(Guid id)
+    public async Task<TEntity> GetByIdAsync(Guid id)
     {
-        return await _dbSet.FindAsync(id);
+        return await _context.Set<TEntity>().FindAsync(id);
     }
     
-    public IQueryable<T> GetAll()
+    public IQueryable<TEntity> GetAll()
     {
-        return _dbSet.AsQueryable();
+        return _context.Set<TEntity>().AsQueryable();
     }
 
-    public async Task AddAsync(T entity)
+    public async Task AddAsync(TEntity entity)
     {
-        await _dbSet.AddAsync(entity);
+        await _context.Set<TEntity>().AddAsync(entity);
     }
 
-    public void Remove(T entity)
+    public void Remove(TEntity entity)
     {
-        _dbSet.Remove(entity);
+        _context.Set<TEntity>().Remove(entity);
     }
 }

@@ -12,14 +12,8 @@ public class RefreshTokensRepository : Repository<RefreshTokens>, IRefreshTokens
         _context = context;
     }
 
-    public async Task<RefreshTokens> GetByToken(string token)
+    public RefreshTokens GetByToken(string token)
     {
-        return await _context.RefreshTokens.FirstOrDefaultAsync(rt => rt.RefreshToken == token);
-    }
-    
-    public RefreshTokens UpdateToken(RefreshTokens entity)
-    {
-        _context.RefreshTokens.Update(entity);
-        return entity;
+        return  _context.RefreshTokens.AsNoTracking().FirstOrDefault(rt => rt.RefreshToken == token);
     }
 }

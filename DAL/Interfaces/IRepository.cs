@@ -1,9 +1,9 @@
 ﻿namespace DAL.Interfaces;
 
-public interface IRepository<T> where T : class
+public interface IRepository<TEntity> where TEntity : class
 {
-    Task<T> GetByIdAsync(Guid id);
-    IQueryable<T> GetAll();
-    Task AddAsync(T entity);
-    void Remove(T entity);
+    Task<TEntity> GetByIdAsync(Guid id);
+    IQueryable<TEntity> GetAll();
+    Task AddAsync(TEntity entity);
+    void Remove(TEntity entity);
 }
