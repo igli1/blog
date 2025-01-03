@@ -24,24 +24,20 @@ public class UserService : IUserService
         _jwt = jwt.Value;
     }
     
-    public async Task<ServiceResponse<RefreshTokens>> AddOrUpdateRefreshTokens(RefreshTokens rt)
+    public async Task<ServiceResponse<RefreshTokens>> AddRefreshTokens(RefreshTokens rt)
     {
         var serviceResponse = new ServiceResponse<RefreshTokens>();
         try
         {
             var existingRt = await _unitOfWork.RefreshTokens.GetByToken(rt.RefreshToken);
 
-            if (existingRt == null)
+            if (existingRt != null)
             {
-                existingRt.RefreshToken = GenerateRefreshToken();
-                await _unitOfWork.RefreshTokens.AddAsync(rt);
+                rt.RefreshToken = GenerateRefreshToken();
             }
-            else
-            {
-                existingRt.RefreshTokenExpiryTime = rt.RefreshTokenExpiryTime;
-                _unitOfWork.RefreshTokens.UpdateToken(existingRt);
-            }
-
+            
+            rt.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(_jwt.RefreshTokenValidityInDays);
+            await _unitOfWork.RefreshTokens.AddAsync(rt);
             await _unitOfWork.CommitAsync();
 
             serviceResponse.Status = true;

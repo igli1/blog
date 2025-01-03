@@ -65,6 +65,26 @@ public class UsersController : ControllerBase
         var accessToken = _userService.GenerateAccessToken(model.Email, userRoles.FirstOrDefault());
         
         var refreshToken = _userService.GenerateRefreshToken();
+
+        var refeshTokenEntity = new RefreshTokens
+        {
+            UserId = user.Id,
+            RefreshToken = refreshToken,
+            RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(_jwt.RefreshTokenValidityInDays)
+        };
+        
+        var insertRefreshTokenResponse = await _userService.AddRefreshTokens(refeshTokenEntity);
+
+        if (!insertRefreshTokenResponse.Status)
+        {
+            var error = new ErrorDto
+            {
+                Code = "RefreshTokenNotSaved", 
+                Description = insertRefreshTokenResponse.Message
+            };
+            return BadRequest(error);
+        }
+        
         var rt = new RefreshTokenDto
         {
             RefreshToken = refreshToken,
@@ -78,5 +98,13 @@ public class UsersController : ControllerBase
         };
         
         return Ok(tokens);
+    }
+
+    [HttpGet]
+    [Route("test")]
+    [Authorize (Roles = "User")]
+    public ActionResult Get()
+    {
+        return Ok();
     }
 }
