@@ -1,4 +1,5 @@
-﻿using BLL.Interfaces;
+﻿using System.Security.Claims;
+using BLL.Interfaces;
 using DAL.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -121,5 +122,62 @@ public class BlogController : ControllerBase
         }
         
         return Ok(categoryResponse.Data);
+    }
+
+    [HttpPost]
+    [Route("AddBlogPost")]
+    [Authorize]
+    public async Task<ActionResult> AddBlogPost([FromBody] PostDto model)
+    {
+        if (!ModelState.IsValid)
+        {
+            var error = new ErrorDto
+            {
+                Code = "InvalidModel",
+                Description = "The model is not valid."
+            };
+            return BadRequest(error);
+        }
+        
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        
+        Guid userId = Guid.Parse(userIdClaim);
+        
+        var postCategory = new List<PostCategory>();
+        
+        foreach (var category in model.Categories)
+        {
+            postCategory.Add(new PostCategory
+            {
+                CategoryGuid = category
+            });
+        }
+
+        var post = new Post
+        {
+            Title = model.Title,
+            Content = model.Content,
+            UserId = userId,
+            PostCategories = postCategory,
+            CreatedAt = DateTime.UtcNow,
+            Status = model.Status,
+            PublishAt = model.PublishAt,
+            UpdatedAt =  DateTime.UtcNow,
+        };
+        
+        var postResponse = await _blogService.AddPostAsync(post);
+
+        if (!postResponse.Status)
+        {
+            var error = new ErrorDto
+            {
+                Code = "Error",
+                Description = postResponse.Message
+            };
+            
+            return BadRequest(error);
+        }
+        
+        return Ok(postResponse.Data);
     }
 }

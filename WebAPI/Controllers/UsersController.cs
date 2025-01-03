@@ -61,7 +61,7 @@ public class UsersController : ControllerBase
         }
         
         var userRoles = await _userManager.GetRolesAsync(user);
-        var accessTokenResponse = _userService.GenerateAccessToken(model.Email, userRoles.FirstOrDefault());
+        var accessTokenResponse = _userService.GenerateAccessToken(model.Email, userRoles.FirstOrDefault(), user.Id);
         
         var refreshTokenResponse = _userService.GenerateRefreshToken();
 
